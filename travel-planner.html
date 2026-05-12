@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>顾问出差行程规划</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 640px;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            padding: 32px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        
+        .form-body {
+            padding: 32px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .hint {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 24px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .section-title:first-child {
+            margin-top: 0;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 8px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .status {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .status.loading {
+            display: block;
+            background: #eff6ff;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+        
+        .status.success {
+            display: block;
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        
+        .status.error {
+            display: block;
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #bfdbfe;
+            border-top-color: #1e40af;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .config-bar {
+            background: #f9fafb;
+            padding: 16px 32px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .config-bar label {
+            margin-bottom: 4px;
+        }
+        
+        .config-bar input {
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #e0e7ff;
+            color: #3730a3;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        @media (max-width: 480px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .header, .form-body, .config-bar {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✈️ 顾问出差行程规划</h1>
+            <p>填写出差信息，自动生成完整行程单</p>
+        </div>
+        
+        <div class="config-bar">
+            <label>本地规划接口 <span class="badge">必填</span></label>
+            <input type="text" id="plannerApiUrl" placeholder="http://127.0.0.1:8000/plan" />
+            <div class="hint">高德 Key 从项目 config/amap.env 读取；页面不再保存或提交 Key</div>
+        </div>
+        
+        <div class="form-body">
+            <div class="section-title">📍 行程信息</div>
+            
+            <div class="form-group">
+                <label>出发地址</label>
+                <input type="text" id="originAddress" placeholder="例：无锡美的公园天下" />
+                <div class="hint">请填写具体地址，而非城市名</div>
+            </div>
+            
+            <div class="form-group">
+                <label>目的地址</label>
+                <input type="text" id="destAddress" placeholder="例：北京市朝阳区XX大厦" />
+                <div class="hint">请填写具体地址，而非城市名</div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>出发日期</label>
+                    <input type="date" id="departDate" />
+                </div>
+                <div class="form-group">
+                    <label>返回日期</label>
+                    <input type="date" id="returnDate" />
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>出发时间偏好</label>
+                <select id="timePreference">
+                    <option value="上午">上午（6:00-12:00）</option>
+                    <option value="下午">下午（12:00-18:00）</option>
+                    <option value="晚上">晚上（18:00-22:00）</option>
+                    <option value="不限">不限</option>
+                </select>
+            </div>
+            
+            <div class="section-title">👔 拜访信息（可选）</div>
+            
+            <div class="form-group">
+                <label>出差目的</label>
+                <input type="text" id="purpose" placeholder="例：客户需求调研、项目交付" />
+            </div>
+            
+            <div class="form-group">
+                <label>客户拜访安排</label>
+                <textarea id="clientVisits" placeholder="例：&#10;5月15日 14:00 - 客户A（北京市朝阳区XX路XX号）&#10;5月16日 10:00 - 客户B（北京市海淀区YY路YY号）"></textarea>
+                <div class="hint">每行一个拜访安排，格式：日期 时间 - 客户名（地址）</div>
+            </div>
+            
+            <button class="btn" id="submitBtn" onclick="submitForm()">
+                生成行程规划
+            </button>
+            
+            <div class="status" id="status"></div>
+        </div>
+    </div>
+    
+    <script>
+        // 设置默认日期
+        const today = new Date();
+        const nextWeek = new Date(today);
+        nextWeek.setDate(today.getDate() + 7);
+        document.getElementById('departDate').valueAsDate = nextWeek;
+        
+        const returnDate = new Date(nextWeek);
+        returnDate.setDate(nextWeek.getDate() + 2);
+        document.getElementById('returnDate').valueAsDate = returnDate;
+        
+        // 从 localStorage 读取上次使用的本地接口
+        const savedApiUrl = localStorage.getItem('travel_planner_api_url');
+        if (savedApiUrl) {
+            document.getElementById('plannerApiUrl').value = savedApiUrl;
+        } else {
+            document.getElementById('plannerApiUrl').value = 'http://127.0.0.1:8000/plan';
+        }
+        
+        async function submitForm() {
+            const plannerApiUrl = document.getElementById('plannerApiUrl').value.trim();
+            if (!plannerApiUrl) {
+                showStatus('请填写本地规划接口地址', 'error');
+                return;
+            }
+            
+            const originAddress = document.getElementById('originAddress').value.trim();
+            const destAddress = document.getElementById('destAddress').value.trim();
+            const departDate = document.getElementById('departDate').value;
+            
+            if (!originAddress || !destAddress || !departDate) {
+                showStatus('请填写出发地址、目的地址和出发日期', 'error');
+                return;
+            }
+            
+            // 保存本地规划接口
+            localStorage.setItem('travel_planner_api_url', plannerApiUrl);
+            
+            const payload = {
+                origin_address: originAddress,
+                dest_address: destAddress,
+                depart_date: departDate,
+                return_date: document.getElementById('returnDate').value || '',
+                time_preference: document.getElementById('timePreference').value,
+                purpose: document.getElementById('purpose').value.trim() || '出差',
+                client_visits: document.getElementById('clientVisits').value.trim() || '无'
+            };
+            
+            // 提取城市名（简单提取）
+            const cityMatch = originAddress.match(/(.+?市)/);
+            payload.origin_city = cityMatch ? cityMatch[1] : originAddress.substring(0, 2);
+            
+            const destCityMatch = destAddress.match(/(.+?市)/);
+            payload.dest_city = destCityMatch ? destCityMatch[1] : destAddress.substring(0, 2);
+            
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = '规划中...';
+            showStatus('<span class="spinner"></span>正在规划行程，请稍候（通常需要1-3分钟）...', 'loading');
+            
+            try {
+                const response = await fetch(plannerApiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (response.ok) {
+                    showStatus('✅ 行程规划已提交，本地服务正在处理。', 'success');
+                } else {
+                    const errorText = await response.text();
+                    showStatus('❌ 提交失败：' + (errorText || response.statusText), 'error');
+                }
+            } catch (error) {
+                showStatus('❌ 网络错误：' + error.message + '<br><br>请检查本地规划接口是否已启动，或是否存在跨域限制。', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '生成行程规划';
+            }
+        }
+        
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.className = 'status ' + type;
+            status.innerHTML = message;
+        }
+        
+        // 回车提交
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+                submitForm();
+            }
+        });
+    </script>
+</body>
+</html>

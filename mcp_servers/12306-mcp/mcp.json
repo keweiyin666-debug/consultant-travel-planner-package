@@ -1,0 +1,10 @@
+{
+  "name": "12306-mcp",
+  "display_name": "12306 高铁查询",
+  "description": "查询12306高铁/火车票余票、车次、经停站信息",
+  "transport": "stdio",
+  "command": "npx",
+  "args": ["-y", "12306-mcp"],
+  "env": {},
+  "enabled": true
+}

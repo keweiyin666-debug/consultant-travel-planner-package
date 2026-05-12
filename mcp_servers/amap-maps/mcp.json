@@ -1,0 +1,10 @@
+{
+  "name": "amap-maps",
+  "display_name": "高德地图",
+  "description": "地理编码、路径规划、POI搜索、天气查询等地图服务",
+  "transport": "stdio",
+  "command": "/bin/bash",
+  "args": ["/Users/yinkewei/Desktop/日常工作/代码测试/consultant-travel-planner-package/mcp_servers/amap-maps/run_amap_mcp.sh"],
+  "env": {},
+  "enabled": true
+}

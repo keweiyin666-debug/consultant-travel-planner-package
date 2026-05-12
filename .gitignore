@@ -1,0 +1,8 @@
+.env
+config/*.env
+config/*.local.json
+__pycache__/
+*.pyc
+logs/
+*.log
+mcp_servers/flyclaw-flight-server/vendor/flyclaw/cache/.device_id

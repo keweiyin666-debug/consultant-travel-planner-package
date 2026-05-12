@@ -1,0 +1,10 @@
+{
+  "name": "flight-ticket-server",
+  "display_name": "FlyClaw 航班聚合查询",
+  "description": "兼容原 flight-ticket-server 名称，实际通过 FlyClaw 聚合查询国内/国际航班路线、票价、时刻和中转方案。",
+  "transport": "stdio",
+  "command": "/Users/yinkewei/Desktop/日常工作/代码测试/consultant-travel-planner-package/.venv-flight/bin/python",
+  "args": ["/Users/yinkewei/Desktop/日常工作/代码测试/consultant-travel-planner-package/mcp_servers/flyclaw-flight-server/run_flyclaw_mcp.py"],
+  "env": {},
+  "enabled": true
+}
